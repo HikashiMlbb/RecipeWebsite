@@ -20,5 +20,22 @@ export const initializeDatabase = async () => {
     `;
     await pool.query(createUser);
 
+    // Creating Recipe
+    const createRecipe = `
+    CREATE TABLE IF NOT EXISTS Recipes (
+        Id SERIAL PRIMARY KEY,
+        Author_Id INTEGER NOT NULL REFERENCES Users(Id) ON DELETE CASCADE,
+        Title VARCHAR(50) NOT NULL,
+        Description TEXT NOT NULL,
+        Instruction TEXT NOT NULL,
+        Image_Name TEXT NOT NULL,
+        Difficulty TEXT NOT NULL CONSTRAINT difficulty_enum CHECK (Difficulty IN ('easy', 'medium', 'hard')) DEFAULT 'easy',
+        Rating NUMERIC(2, 1) NOT NULL DEFAULT 0,
+        Total_Rates INTEGER NOT NULL DEFAULT 0,
+        Created_At TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    `;
+    await pool.query(createRecipe);
+
     console.info("\x1b[34mDatabase is successfully initialized!\x1b[0m");
 }
