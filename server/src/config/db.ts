@@ -37,5 +37,16 @@ export const initializeDatabase = async () => {
     `;
     await pool.query(createRecipe);
 
+    // Creating Comment
+    const createComment = `
+    CREATE TABLE IF NOT EXISTS Comments (
+        Recipe_Id INTEGER NOT NULL REFERENCES Recipes(Id) ON DELETE CASCADE,
+        Author_Id INTEGER NULL REFERENCES Users(Id) ON DELETE SET NULL,
+        Content TEXT NOT NULL,
+        Created_At TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    `;
+    await pool.query(createComment);
+
     console.info("\x1b[34mDatabase is successfully initialized!\x1b[0m");
 }
