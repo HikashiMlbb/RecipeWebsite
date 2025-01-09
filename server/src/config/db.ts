@@ -9,6 +9,16 @@ export const pool = new Pool({
 });
 
 export const initializeDatabase = async () => {
-    await pool.query(`SELECT VERSION()`);
+    // Creating User
+    const createUser = `
+    CREATE TABLE IF NOT EXISTS Users (
+        Id SERIAL PRIMARY KEY,
+        Username VARCHAR(30) NOT NULL CONSTRAINT unqiue_username UNIQUE,
+        Password TEXT NOT NULL,
+        Role TEXT CONSTRAINT role_enum CHECK (Role IN ('classic', 'admin')) NOT NULL DEFAULT 'classic'
+    );
+    `;
+    await pool.query(createUser);
+
     console.info("\x1b[34mDatabase is successfully initialized!\x1b[0m");
 }
