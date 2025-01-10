@@ -48,5 +48,15 @@ export const initializeDatabase = async () => {
     `;
     await pool.query(createComment);
 
+    // Creating RecipeRating
+    const createRecipeRating = `
+    CREATE TABLE IF NOT EXISTS Recipe_Ratings (
+        Recipe_Id INTEGER NOT NULL REFERENCES Recipes(Id) ON DELETE CASCADE,
+        User_Id INTEGER NULL REFERENCES Users(Id) ON DELETE SET NULL,
+        Rate INTEGER NOT NULL CONSTRAINT rating_range CHECK (Rate BETWEEN 1 AND 5)
+    );
+    `;
+    await pool.query(createRecipeRating);
+
     console.info("\x1b[34mDatabase is successfully initialized!\x1b[0m");
 }
