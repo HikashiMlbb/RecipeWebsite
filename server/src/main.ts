@@ -1,7 +1,3 @@
-import dotenv from 'dotenv'
-import path from 'path'
-dotenv.config({ path: path.resolve(__dirname, '../', '../', '.env') })
-
 import { NestFactory } from '@nestjs/core';
 import { initializeDatabase } from './config/db';
 import { AppModule } from './app.module';
