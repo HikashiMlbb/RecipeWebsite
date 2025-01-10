@@ -10,6 +10,12 @@ export const pool = new Pool({
 });
 
 export const initializeDatabase = async () => {
+    try {
+        await pool.connect();
+    } catch {
+        throw new Error("Unable to connect to the database.");
+    }
+
     // Creating User
     await pool.query(createUser);
 
