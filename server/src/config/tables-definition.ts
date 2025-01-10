@@ -47,3 +47,25 @@ CREATE TABLE IF NOT EXISTS Ingredients (
     Measurement_Unit TEXT NOT NULL CONSTRAINT measurement_unit_enum CHECK (Measurement_Unit IN ('grams', 'milliliters', 'pieces'))
 );
 `;
+
+// === Creating trigger with function ===
+export const createCalculateRecipeRatingFunction = `
+CREATE OR REPLACE FUNCTION Calculate_Recipe_Rating() RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE Recipes SET
+        Total_Rates = (SELECT COUNT(*) FROM Recipe_Ratings WHERE Recipe_Id = NEW.Recipe_Id),
+        Rating = (SELECT AVG(Rate) FROM Recipe_Ratings WHERE Recipe_Id = NEW.Recipe_Id)
+    WHERE Id = NEW.Recipe_Id; 
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+`;
+
+export const createRecipeRatingOnChangeTrigger = `
+CREATE OR REPLACE TRIGGER Recipe_Rating_On_Change 
+AFTER INSERT OR UPDATE OR DELETE
+ON Recipe_Ratings
+FOR EACH ROW EXECUTE FUNCTION Calculate_Recipe_Rating();
+`;
+// ======================================

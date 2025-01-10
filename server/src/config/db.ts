@@ -1,5 +1,5 @@
 import { Pool } from 'pg'
-import { createComment, createIngredient, createRecipe, createRecipeRating, createUser } from './tables-definition';
+import * as queries from './tables-definition';
 
 export const pool = new Pool({
     user: process.env.DATABASE_USER,
@@ -17,19 +17,23 @@ export const initializeDatabase = async () => {
     }
 
     // Creating User
-    await pool.query(createUser);
+    await pool.query(queries.createUser);
 
     // Creating Recipe
-    await pool.query(createRecipe);
+    await pool.query(queries.createRecipe);
 
     // Creating Comment
-    await pool.query(createComment);
+    await pool.query(queries.createComment);
 
     // Creating RecipeRating
-    await pool.query(createRecipeRating);
+    await pool.query(queries.createRecipeRating);
 
     // Creating Ingredient
-    await pool.query(createIngredient);
+    await pool.query(queries.createIngredient);
+
+    // Creating Trigger with Function on RecipeRating
+    await pool.query(queries.createCalculateRecipeRatingFunction);
+    await pool.query(queries.createRecipeRatingOnChangeTrigger);
 
     console.info("\x1b[34mDatabase is successfully initialized!\x1b[0m");
 }
