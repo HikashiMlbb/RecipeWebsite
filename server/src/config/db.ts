@@ -58,5 +58,16 @@ export const initializeDatabase = async () => {
     `;
     await pool.query(createRecipeRating);
 
+    // Creating Ingredient
+    const createIngredient = `
+    CREATE TABLE IF NOT EXISTS Ingredients (
+        Recipe_Id INTEGER NOT NULL REFERENCES Recipes(Id) ON DELETE CASCADE,
+        Name VARCHAR(50) NOT NULL,
+        Count REAL NOT NULL CONSTRAINT count_exists CHECK (COUNT > 0),
+        Measurement_Unit TEXT NOT NULL CONSTRAINT measurement_unit_enum CHECK (Measurement_Unit IN ('grams', 'milliliters', 'pieces'))
+    );
+    `;
+    await pool.query(createIngredient);
+
     console.info("\x1b[34mDatabase is successfully initialized!\x1b[0m");
 }
