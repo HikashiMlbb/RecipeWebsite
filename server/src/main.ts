@@ -14,6 +14,8 @@ const startApp = async () => {
 
         const app = await NestFactory.create(AppModule);
         
+        app.setGlobalPrefix('/api');
+        
         app.listen(PORT, () => {
             console.info(`\x1b[34mServer currently listening to port ${PORT}...\x1b[0m`);
         });
