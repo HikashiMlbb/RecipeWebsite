@@ -1,7 +1,8 @@
-import { ArgumentMetadata, NotAcceptableException, PipeTransform } from "@nestjs/common";
+import { NotAcceptableException, PipeTransform } from "@nestjs/common";
+import { UserDto } from "../dto/user.dto";
 
 export class UserValidationPipe implements PipeTransform {
-    transform(value: any, metadata: ArgumentMetadata) {
+    transform(value: UserDto) {
         if (!value.username) {
             throw new NotAcceptableException('Username must be specified.');
         }
