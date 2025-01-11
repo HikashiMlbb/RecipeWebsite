@@ -1,6 +1,6 @@
 import { ArgumentMetadata, NotAcceptableException, PipeTransform } from "@nestjs/common";
 
-export class RegisterUserValidationPipe implements PipeTransform {
+export class UserValidationPipe implements PipeTransform {
     transform(value: any, metadata: ArgumentMetadata) {
         if (!value.username) {
             throw new NotAcceptableException('Username must be specified.');

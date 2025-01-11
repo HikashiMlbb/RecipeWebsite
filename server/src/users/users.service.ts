@@ -1,5 +1,5 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { RegisterUserDto } from './dto/register-user.dto';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { UserDto } from './dto/user.dto';
 import { pool } from '../config/db';
 import * as bcrypt from 'bcrypt'
 
@@ -7,9 +7,25 @@ const salt = 10;
 
 @Injectable()
 export class UsersService {
-    async login() { }
+    async login(dto: UserDto) {
+        const searchQuery = "SELECT * FROM Users WHERE Username = $1;";
+        const searchResult = await pool.query(searchQuery, [ dto.username ]);
 
-    async register(dto: RegisterUserDto) {
+        if (searchResult.rowCount == 0) {
+            throw new UnauthorizedException('Invalid username or password.');
+        }
+
+        const encryptedPassword = searchResult.rows[0].password;
+        const isSuccess = await bcrypt.compare(dto.password, encryptedPassword);
+
+        if (!isSuccess) {
+            throw new UnauthorizedException('Invalid username or password.');
+        }
+
+        return searchResult.rows[0].id;
+    }
+  
+    async register(dto: UserDto) {
         const searchQuery = "SELECT * FROM Users WHERE Username = $1;";
         const searchResult = await pool.query(searchQuery, [ dto.username ]);
 
@@ -19,10 +35,7 @@ export class UsersService {
 
         const hashedPassword = await bcrypt.hash(dto.password, salt);
         const createQuery = "INSERT INTO Users (username, password) VALUES ($1, $2);";
-        const result = await pool.query(createQuery, [dto.username, hashedPassword]);
-        console.log(result);
-
-        return ;
+        await pool.query(createQuery, [dto.username, hashedPassword]);
     }
 
     async get() { }
