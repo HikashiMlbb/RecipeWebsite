@@ -12,6 +12,7 @@
   "type": "commonjs",
   "description": "",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
     "@types/pg": "^8.11.10",
     "typescript": "^5.7.2"
