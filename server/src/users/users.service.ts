@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { pool } from '../config/db';
 import bcrypt from 'bcrypt'
@@ -35,8 +35,10 @@ export class UsersService {
     }
   
     async register(dto: UserDto) {
+        console.log(`SELECT * FROM Users WHERE Username = '${dto.username}';`);
         const searchQuery = "SELECT * FROM Users WHERE Username = $1;";
         const searchResult = await pool.query(searchQuery, [ dto.username ]);
+        // const searchResult = await pool.query(`SELECT * FROM Users WHERE Username = '${dto.username}';`);
 
         if (searchResult.rows.length != 0) {
             throw new ConflictException("User with given username already exists.");
@@ -54,5 +56,14 @@ export class UsersService {
         return jwt;
     }
 
-    async get() { }
+    async get(id: number) {
+        const searchQuery = "SELECT Id, Username FROM Users WHERE Id = $1;";
+        const searchResult = await pool.query(searchQuery, [ id ]);
+
+        if (searchResult.rows.length == 0) {
+            throw new NotFoundException('User with such ID has not been found.');
+        }
+
+        return searchResult.rows[0];
+    }
 }

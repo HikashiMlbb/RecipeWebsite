@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, RawBodyRequest, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, Query, RawBodyRequest, Req, Res } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/user.dto';
 import { UserValidationPipe } from './pipes/user-validation.pipe';
@@ -30,8 +30,13 @@ export class UsersController {
         }
     }
 
+    @HttpCode(200)
     @Get('get')
-    async get() {
-        return this.userService.get();
+    async get(@Query('id') id: number) {
+        try {
+            return await this.userService.get(id);
+        } catch (error) {
+            throw error;
+        }
     }
 }
