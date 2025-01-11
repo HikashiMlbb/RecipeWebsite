@@ -1,41 +1,57 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserDto } from './dto/user.dto';
 import { pool } from '../config/db';
-import * as bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt'
+import { JwtService } from '@nestjs/jwt';
 
 const salt = 10;
 
 @Injectable()
 export class UsersService {
+    private invalidUsernameOrPassword = 'Invalid username or password.';
+
+    constructor (private jwtService: JwtService) {}
+
     async login(dto: UserDto) {
         const searchQuery = "SELECT * FROM Users WHERE Username = $1;";
         const searchResult = await pool.query(searchQuery, [ dto.username ]);
 
         if (searchResult.rowCount == 0) {
-            throw new UnauthorizedException('Invalid username or password.');
+            throw new UnauthorizedException(this.invalidUsernameOrPassword);
         }
 
         const encryptedPassword = searchResult.rows[0].password;
         const isSuccess = await bcrypt.compare(dto.password, encryptedPassword);
 
         if (!isSuccess) {
-            throw new UnauthorizedException('Invalid username or password.');
+            throw new UnauthorizedException(this.invalidUsernameOrPassword);
         }
 
-        return searchResult.rows[0].id;
+        const id = searchResult.rows[0].id;
+
+        const token = await this.jwtService.signAsync({ sub: id });
+
+        return token;
     }
   
     async register(dto: UserDto) {
         const searchQuery = "SELECT * FROM Users WHERE Username = $1;";
         const searchResult = await pool.query(searchQuery, [ dto.username ]);
 
-        if (searchResult.rowCount != 0) {
+        if (searchResult.rows.length != 0) {
             throw new ConflictException("User with given username already exists.");
         }
 
         const hashedPassword = await bcrypt.hash(dto.password, salt);
         const createQuery = "INSERT INTO Users (username, password) VALUES ($1, $2);";
         await pool.query(createQuery, [dto.username, hashedPassword]);
+
+        const newUserQuery = "SELECT Id FROM Users WHERE Username = $1;";
+        const newUserResult = await pool.query(newUserQuery, [ dto.username ]);
+        const newUserId: number = newUserResult.rows[0].id;
+
+        const jwt = await this.jwtService.signAsync({ sub: newUserId });
+        return jwt;
     }
 
     async get() { }
