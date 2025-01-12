@@ -5,6 +5,7 @@ dotenv.config({ path: path.resolve(__dirname, '../', '../', '.env') })
 import { NestFactory } from '@nestjs/core';
 import { initializeDatabase } from './config/db';
 import { AppModule } from './app.module';
+import cookieParser from 'cookie-parser';
 
 const PORT: number = Number(process.env.PORT) || 3001;
 
@@ -13,6 +14,9 @@ const startApp = async () => {
         await initializeDatabase();
 
         const app = await NestFactory.create(AppModule);
+        
+        app.setGlobalPrefix('/api');
+        app.use(cookieParser());
         
         app.listen(PORT, () => {
             console.info(`\x1b[34mServer currently listening to port ${PORT}...\x1b[0m`);
