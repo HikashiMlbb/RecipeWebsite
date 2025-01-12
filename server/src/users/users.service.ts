@@ -35,10 +35,8 @@ export class UsersService {
     }
   
     async register(dto: UserDto) {
-        console.log(`SELECT * FROM Users WHERE Username = '${dto.username}';`);
         const searchQuery = "SELECT * FROM Users WHERE Username = $1;";
         const searchResult = await pool.query(searchQuery, [ dto.username ]);
-        // const searchResult = await pool.query(`SELECT * FROM Users WHERE Username = '${dto.username}';`);
 
         if (searchResult.rows.length != 0) {
             throw new ConflictException("User with given username already exists.");

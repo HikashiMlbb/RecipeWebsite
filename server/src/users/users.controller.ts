@@ -8,18 +8,18 @@ import { Response } from 'express';
 export class UsersController {
     constructor (private userService: UsersService) {}
 
-    @HttpCode(200)
+    @HttpCode(204)
     @Post('login')
     async login(@Body(UserValidationPipe) userDto: UserDto, @Res({ passthrough: true }) response: Response) {
         const token = await this.userService.login(userDto);
-        response.cookie('authorization', token);
+        response.cookie('authentication', token);
     }
 
     @HttpCode(201)
     @Post('register')
     async register(@Body(UserValidationPipe) userDto: UserDto, @Res({ passthrough: true}) response: Response) {
         const token = await this.userService.register(userDto);
-        response.cookie('authorization', token);
+        response.cookie('authentication', token);
     }
 
     @HttpCode(200)
