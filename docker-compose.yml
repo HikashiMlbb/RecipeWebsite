@@ -1,3 +1,6 @@
 services:
   backend:
     build: RecipeWebsite.Server/
+
+  database:
+    image: postgres:latest
