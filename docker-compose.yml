@@ -2,6 +2,10 @@ services:
   backend:
     build: RecipeWebsite.Server/
     env_file: "backend.env"
+    environment:
+      ASPNETCORE_HTTP_PORTS: 8080
+    expose:
+      - "8080"
     depends_on:
       database:
         condition: service_healthy
