@@ -1,0 +1,3 @@
+[submodule "RecipeWebsite.Server"]
+	path = RecipeWebsite.Server
+	url = https://github.com/HikashiMlbb/RecipeWebsite.Server.git
