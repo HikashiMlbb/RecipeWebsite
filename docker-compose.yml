@@ -2,7 +2,14 @@ services:
   backend:
     build: RecipeWebsite.Server/
     env_file: "backend.env"
+    depends_on:
+      database:
+        condition: service_healthy
 
   database:
     image: postgres:latest
     env_file: "database.env"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      retries: 5
