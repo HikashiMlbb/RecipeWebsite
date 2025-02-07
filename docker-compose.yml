@@ -1,6 +1,8 @@
 services:
   backend:
     build: RecipeWebsite.Server/
+    env_file: "backend.env"
 
   database:
     image: postgres:latest
+    env_file: "database.env"
