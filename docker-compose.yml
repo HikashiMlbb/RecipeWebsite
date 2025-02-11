@@ -19,6 +19,9 @@ services:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       retries: 5
+    volumes:
+      - database-volume:/var/lib/postgresql/data/
+
 
   nginx:
     image: nginx
@@ -29,3 +32,6 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+
+volumes:
+  database-volume:
