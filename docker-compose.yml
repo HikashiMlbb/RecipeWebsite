@@ -9,16 +9,18 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8080/healthz"]
-      interval: 5s
-      retries: 5
+      interval: 2s
+      retries: 10
+    volumes:
+      - backend-static-files-volume:/app/static
 
   database:
     image: postgres:latest
     env_file: "database.env"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
-      interval: 5s
-      retries: 5
+      interval: 2s
+      retries: 10
     volumes:
       - database-volume:/var/lib/postgresql/data/
 
@@ -35,3 +37,4 @@ services:
 
 volumes:
   database-volume:
+  backend-static-files-volume:
