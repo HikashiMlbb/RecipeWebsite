@@ -1,6 +1,6 @@
 services:
   backend:
-    build: RecipeWebsite.Server/
+    image: hikashi/recipewebsite-backend:latest
     env_file: "backend.env"
     environment:
       ASPNETCORE_HTTP_PORTS: 8080
@@ -23,7 +23,6 @@ services:
       retries: 10
     volumes:
       - database-volume:/var/lib/postgresql/data/
-
 
   nginx:
     image: nginx
