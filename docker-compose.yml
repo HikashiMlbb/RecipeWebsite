@@ -1,9 +1,6 @@
 services:
   frontend:
     image: hikashi/recipewebsite-frontend:latest
-    depends_on:
-      backend:
-        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:80"]
       interval: 2s
